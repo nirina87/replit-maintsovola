@@ -33,9 +33,29 @@ def main():
     </div>
     """, unsafe_allow_html=True)
     
+    # Bloc de statistiques
+    st.markdown("""
+    <div style="margin: 3rem 0;">
+        <div style="display: flex; justify-content: space-around; flex-wrap: wrap; gap: 2rem;">
+            <div style="background: linear-gradient(135deg, #2E8B57, #228B22); color: white; padding: 2rem; border-radius: 15px; text-align: center; min-width: 200px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+                <h3 style="margin: 0; font-size: 2.5rem; font-weight: bold;">15</h3>
+                <p style="margin: 0.5rem 0 0 0; font-size: 1.1rem;">Utilisateurs actifs</p>
+            </div>
+            <div style="background: linear-gradient(135deg, #4682B4, #1E90FF); color: white; padding: 2rem; border-radius: 15px; text-align: center; min-width: 200px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+                <h3 style="margin: 0; font-size: 2.5rem; font-weight: bold;">31</h3>
+                <p style="margin: 0.5rem 0 0 0; font-size: 1.1rem;">Projets en financement</p>
+            </div>
+            <div style="background: linear-gradient(135deg, #FF8C00, #FF6347); color: white; padding: 2rem; border-radius: 15px; text-align: center; min-width: 200px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+                <h3 style="margin: 0; font-size: 2.5rem; font-weight: bold;">1 510,44</h3>
+                <p style="margin: 0.5rem 0 0 0; font-size: 1.1rem;">Hectares cultivés</p>
+            </div>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+    
     # Message de présentation Maintso Vola en bas
     st.markdown("""
-    <div style="text-align: center; padding: 2rem 0; margin-top: 4rem;">
+    <div style="text-align: center; padding: 2rem 0; margin-top: 2rem;">
         <p style="color: #666; font-size: 1rem; max-width: 900px; margin: 0 auto; line-height: 1.6;">
             Chez Maintso Vola, nous connectons la finance et la technologie pour révolutionner l'agriculture. 
             Grâce à la data, à des outils de suivi en temps réel et à une infrastructure optimisée, 
