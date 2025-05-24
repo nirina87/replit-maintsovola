@@ -27,7 +27,7 @@ def main():
     # Page d'accueil avec message principal
     st.markdown("""
     <div style="text-align: center; padding: 3rem 0;">
-        <h1 style="color: #2E8B57; font-size: 3.5rem; font-weight: bold; margin: 0;">
+        <h1 style="color: #2E8B57; font-size: 35px; font-weight: bold; margin: 0;">
             L'agritech intelligente au service de la rentabilité durable
         </h1>
     </div>
