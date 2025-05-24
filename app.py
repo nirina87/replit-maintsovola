@@ -33,6 +33,18 @@ def main():
     </div>
     """, unsafe_allow_html=True)
     
+    # Message de présentation Maintso Vola en bas
+    st.markdown("""
+    <div style="text-align: center; padding: 2rem 0; margin-top: 4rem;">
+        <p style="color: #666; font-size: 1rem; max-width: 900px; margin: 0 auto; line-height: 1.6;">
+            Chez Maintso Vola, nous connectons la finance et la technologie pour révolutionner l'agriculture. 
+            Grâce à la data, à des outils de suivi en temps réel et à une infrastructure optimisée, 
+            chaque investissement devient traçable, performant et à fort impact. 
+            📊 Investissez dans une nouvelle génération de projets agricoles pilotés par la tech.
+        </p>
+    </div>
+    """, unsafe_allow_html=True)
+    
     # Sidebar for file upload and configuration
     with st.sidebar:
         st.header("📁 Data Upload")
