@@ -5,6 +5,7 @@ from data_analyzer import DataAnalyzer
 from visualization import DataVisualizer
 from ai_insights import AIInsights
 from utils import FileHandler, ExportHandler
+from auth import AuthManager
 import traceback
 
 # Page configuration
@@ -26,6 +27,11 @@ if 'page' not in st.session_state:
     st.session_state.page = 'accueil'
 if 'user_logged_in' not in st.session_state:
     st.session_state.user_logged_in = False
+if 'user_data' not in st.session_state:
+    st.session_state.user_data = None
+
+# Initialize auth manager
+auth_manager = AuthManager()
 
 def main():
     # Navigation entre les pages
@@ -48,12 +54,15 @@ def show_accueil():
     </div>
     """, unsafe_allow_html=True)
     
-    # Bloc de statistiques
-    st.markdown("""
+    # Récupérer les statistiques réelles de la base de données
+    user_stats = auth_manager.get_user_stats()
+    
+    # Bloc de statistiques avec données réelles
+    st.markdown(f"""
     <div style="margin: 3rem 0;">
         <div style="display: flex; justify-content: space-around; flex-wrap: wrap; gap: 2rem;">
             <div style="background: linear-gradient(135deg, #2E8B57, #228B22); color: white; padding: 2rem; border-radius: 15px; text-align: center; min-width: 200px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
-                <h3 style="margin: 0; font-size: 2.5rem; font-weight: bold;">15</h3>
+                <h3 style="margin: 0; font-size: 2.5rem; font-weight: bold;">{user_stats['total_users']}</h3>
                 <p style="margin: 0.5rem 0 0 0; font-size: 1.1rem;">Utilisateurs actifs</p>
             </div>
             <div style="background: linear-gradient(135deg, #4682B4, #1E90FF); color: white; padding: 2rem; border-radius: 15px; text-align: center; min-width: 200px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
@@ -116,10 +125,16 @@ def show_connexion():
             
             if login_button:
                 if username and password:
-                    st.success("Connexion réussie !")
-                    st.session_state.user_logged_in = True
-                    st.session_state.page = 'dashboard'
-                    st.rerun()
+                    # Tenter la connexion avec la base de données
+                    result = auth_manager.login_user(username, password)
+                    if result["success"]:
+                        st.success(result["message"])
+                        st.session_state.user_logged_in = True
+                        st.session_state.user_data = result["user_data"]
+                        st.session_state.page = 'dashboard'
+                        st.rerun()
+                    else:
+                        st.error(result["message"])
                 else:
                     st.error("Veuillez remplir tous les champs")
     
@@ -145,12 +160,26 @@ def show_connexion():
             if register_button:
                 if nom and email and password and confirm_password:
                     if password == confirm_password:
-                        if telephone and (telephone.startswith('032') or telephone.startswith('033')):
-                            st.success("Inscription réussie ! Vous pouvez maintenant vous connecter.")
-                        elif not telephone:
-                            st.success("Inscription réussie ! Vous pouvez maintenant vous connecter.")
-                        else:
+                        # Validation du téléphone si fourni
+                        if telephone and not (telephone.startswith('032') or telephone.startswith('033')):
                             st.error("Format de téléphone invalide. Utilisez 032XXXXXXX ou 033XXXXXXX")
+                        else:
+                            # Enregistrer l'utilisateur dans la base de données
+                            result = auth_manager.register_user(
+                                nom=nom,
+                                prenoms=prenoms,
+                                email=email,
+                                telephone=telephone,
+                                password=password,
+                                investir=investir,
+                                cherche_investisseurs=cherche_investisseurs
+                            )
+                            
+                            if result["success"]:
+                                st.success(result["message"])
+                                st.info("Vous pouvez maintenant vous connecter avec votre email.")
+                            else:
+                                st.error(result["message"])
                     else:
                         st.error("Les mots de passe ne correspondent pas")
                 else:
@@ -166,8 +195,24 @@ def show_inscription():
     pass
 
 def show_dashboard():
-    st.title("🌱 Dashboard Maintso Vola")
-    st.markdown("Bienvenue dans votre espace d'analyse de données agricoles !")
+    # Affichage personnalisé avec les données utilisateur
+    if st.session_state.user_data:
+        user_data = st.session_state.user_data
+        st.title(f"🌱 Dashboard Maintso Vola - Bienvenue {user_data['prenoms'] or user_data['nom']}")
+        
+        # Afficher le profil utilisateur
+        col1, col2 = st.columns([3, 1])
+        with col1:
+            st.markdown("### Votre espace d'analyse de données agricoles")
+        with col2:
+            st.markdown(f"**Email:** {user_data['email']}")
+            if user_data['investir']:
+                st.success("👨‍💼 Investisseur")
+            if user_data['cherche_investisseurs']:
+                st.info("🌱 Porteur de projet")
+    else:
+        st.title("🌱 Dashboard Maintso Vola")
+        st.markdown("Bienvenue dans votre espace d'analyse de données agricoles !")
     
     # Sidebar for file upload and configuration
     with st.sidebar:
@@ -176,6 +221,7 @@ def show_dashboard():
         # Bouton de déconnexion
         if st.button("🚪 Se déconnecter"):
             st.session_state.user_logged_in = False
+            st.session_state.user_data = None
             st.session_state.page = 'accueil'
             st.rerun()
         
