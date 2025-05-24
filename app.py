@@ -24,8 +24,20 @@ if 'insights' not in st.session_state:
     st.session_state.insights = None
 
 def main():
-    st.title("🤖 AI-Powered Data Analysis Tool")
-    st.markdown("Upload your data and let AI discover insights and trends for you!")
+    # Page d'accueil avec message personnalisé
+    st.markdown("""
+    <div style="text-align: center; padding: 2rem 0;">
+        <h1 style="color: #2E8B57; font-size: 3rem; font-weight: bold; margin-bottom: 1rem;">
+            L'agritech intelligente au service de la rentabilité durable
+        </h1>
+        <h2 style="color: #4A4A4A; font-size: 1.5rem; margin-bottom: 2rem;">
+            🤖 Outil d'Analyse de Données Alimenté par l'IA
+        </h2>
+        <p style="color: #666; font-size: 1.2rem; max-width: 800px; margin: 0 auto;">
+            Téléchargez vos données agricoles et laissez l'IA découvrir des insights et tendances pour optimiser votre rentabilité !
+        </p>
+    </div>
+    """, unsafe_allow_html=True)
     
     # Sidebar for file upload and configuration
     with st.sidebar:
@@ -99,37 +111,37 @@ def main():
             display_export_options(data)
     
     else:
-        st.info("👆 Please upload a CSV or Excel file to begin analysis")
+        st.info("👆 Veuillez télécharger un fichier CSV ou Excel pour commencer l'analyse")
         
-        # Show example of what the tool can do
-        st.markdown("### 🎯 What this tool can do:")
+        # Show example of what the tool can do for agritech
+        st.markdown("### 🎯 Ce que notre plateforme peut faire pour votre exploitation :")
         col1, col2, col3 = st.columns(3)
         
         with col1:
             st.markdown("""
-            **📊 Data Analysis**
-            - Automatic data profiling
-            - Statistical summaries
-            - Missing value analysis
-            - Data type detection
+            **🌱 Analyse Agricole**
+            - Profil automatique des cultures
+            - Résumés de rendements
+            - Analyse des données manquantes
+            - Détection des types de données
             """)
         
         with col2:
             st.markdown("""
-            **🤖 AI-Powered Insights**
-            - Trend detection
-            - Pattern recognition
-            - Anomaly detection
-            - Predictive insights
+            **🤖 Intelligence Artificielle**
+            - Détection de tendances agricoles
+            - Reconnaissance de patterns
+            - Détection d'anomalies climatiques
+            - Prédictions de rendements
             """)
         
         with col3:
             st.markdown("""
-            **📈 Visualizations**
-            - Interactive charts
-            - Correlation heatmaps
-            - Time series plots
-            - Distribution analysis
+            **📈 Visualisations**
+            - Graphiques interactifs
+            - Cartes de corrélations
+            - Analyses temporelles
+            - Distribution des récoltes
             """)
 
 def display_data_preview(data, analyzer):
