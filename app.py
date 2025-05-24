@@ -8,12 +8,17 @@ from utils import FileHandler, ExportHandler
 from auth import AuthManager
 import traceback
 
-# Page configuration
+# Page configuration optimisée pour mobile PWA
 st.set_page_config(
-    page_title="AI Data Analysis Tool",
-    page_icon="📊",
+    page_title="Maintso Vola - Agritech",
+    page_icon="🌱",
     layout="wide",
-    initial_sidebar_state="expanded"
+    initial_sidebar_state="collapsed",
+    menu_items={
+        'Get Help': None,
+        'Report a bug': None,
+        'About': "Maintso Vola - L'agritech intelligente au service de la rentabilité durable"
+    }
 )
 
 # Initialize session state
@@ -34,6 +39,68 @@ if 'user_data' not in st.session_state:
 auth_manager = AuthManager()
 
 def main():
+    # Injection PWA dans le head HTML
+    st.markdown("""
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="theme-color" content="#2E8B57">
+    <link rel="manifest" href="/static/manifest.json">
+    <link rel="apple-touch-icon" href="/static/icon-192.png">
+    
+    <script>
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('/static/sw.js')
+        .then(function(registration) {
+            console.log('SW registered: ', registration);
+        })
+        .catch(function(registrationError) {
+            console.log('SW registration failed: ', registrationError);
+        });
+    }
+    </script>
+    
+    <style>
+    .main .block-container {
+        padding-top: 1rem;
+        padding-bottom: 1rem;
+        max-width: 100%;
+    }
+    
+    /* Style mobile-first */
+    @media (max-width: 768px) {
+        .main .block-container {
+            padding-left: 1rem;
+            padding-right: 1rem;
+        }
+        
+        .stButton > button {
+            width: 100%;
+            font-size: 18px;
+            padding: 12px;
+        }
+        
+        h1 {
+            font-size: 24px !important;
+        }
+    }
+    
+    /* Masquer les éléments Streamlit non nécessaires sur mobile */
+    .css-1d391kg, .css-1v0mbdj {
+        display: none;
+    }
+    
+    /* Style pour les cartes statistiques */
+    .stat-card {
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin: 0.5rem;
+        text-align: center;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+    
     # Navigation entre les pages
     if st.session_state.page == 'accueil':
         show_accueil()
@@ -57,25 +124,32 @@ def show_accueil():
     # Récupérer les statistiques réelles de la base de données
     user_stats = auth_manager.get_user_stats()
     
-    # Bloc de statistiques avec données réelles
-    st.markdown(f"""
-    <div style="margin: 3rem 0;">
-        <div style="display: flex; justify-content: space-around; flex-wrap: wrap; gap: 2rem;">
-            <div style="background: linear-gradient(135deg, #2E8B57, #228B22); color: white; padding: 2rem; border-radius: 15px; text-align: center; min-width: 200px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
-                <h3 style="margin: 0; font-size: 2.5rem; font-weight: bold;">{user_stats['total_users']}</h3>
-                <p style="margin: 0.5rem 0 0 0; font-size: 1.1rem;">Utilisateurs actifs</p>
-            </div>
-            <div style="background: linear-gradient(135deg, #4682B4, #1E90FF); color: white; padding: 2rem; border-radius: 15px; text-align: center; min-width: 200px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
-                <h3 style="margin: 0; font-size: 2.5rem; font-weight: bold;">31</h3>
-                <p style="margin: 0.5rem 0 0 0; font-size: 1.1rem;">Projets en financement</p>
-            </div>
-            <div style="background: linear-gradient(135deg, #FF8C00, #FF6347); color: white; padding: 2rem; border-radius: 15px; text-align: center; min-width: 200px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
-                <h3 style="margin: 0; font-size: 2.5rem; font-weight: bold;">1 510,44</h3>
-                <p style="margin: 0.5rem 0 0 0; font-size: 1.1rem;">Hectares cultivés</p>
-            </div>
+    # Bloc de statistiques optimisé mobile
+    col1, col2, col3 = st.columns(3)
+    
+    with col1:
+        st.markdown(f"""
+        <div class="stat-card" style="background: linear-gradient(135deg, #2E8B57, #228B22); color: white;">
+            <h2 style="margin: 0; font-size: 2rem; font-weight: bold;">{user_stats['total_users']}</h2>
+            <p style="margin: 0.5rem 0 0 0; font-size: 0.9rem;">Utilisateurs</p>
         </div>
-    </div>
-    """, unsafe_allow_html=True)
+        """, unsafe_allow_html=True)
+    
+    with col2:
+        st.markdown("""
+        <div class="stat-card" style="background: linear-gradient(135deg, #4682B4, #1E90FF); color: white;">
+            <h2 style="margin: 0; font-size: 2rem; font-weight: bold;">31</h2>
+            <p style="margin: 0.5rem 0 0 0; font-size: 0.9rem;">Projets</p>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with col3:
+        st.markdown("""
+        <div class="stat-card" style="background: linear-gradient(135deg, #FF8C00, #FF6347); color: white;">
+            <h2 style="margin: 0; font-size: 2rem; font-weight: bold;">1,510</h2>
+            <p style="margin: 0.5rem 0 0 0; font-size: 0.9rem;">Hectares</p>
+        </div>
+        """, unsafe_allow_html=True)
     
     # Message de présentation Maintso Vola en bas
     st.markdown("""
@@ -89,17 +163,23 @@ def show_accueil():
     </div>
     """, unsafe_allow_html=True)
     
-    # Bouton de connexion/inscription
+    # Bouton de connexion/inscription optimisé mobile
+    st.markdown("<br>", unsafe_allow_html=True)
+    
+    if st.button("🔐 Se connecter / S'inscrire", type="primary", use_container_width=True):
+        st.session_state.page = 'connexion'
+        st.rerun()
+    
+    # Afficher un message d'installation PWA
     st.markdown("""
-    <div style="text-align: center; margin: 3rem 0;">
+    <div style="text-align: center; margin-top: 2rem; padding: 1rem; background: #f0f8f5; border-radius: 10px; border-left: 4px solid #2E8B57;">
+        <p style="margin: 0; color: #2E8B57; font-weight: bold;">📱 Installez l'app sur votre téléphone !</p>
+        <p style="margin: 0.5rem 0 0 0; color: #666; font-size: 0.9rem;">
+            Sur mobile: Menu → "Ajouter à l'écran d'accueil"<br>
+            Accès hors ligne et notifications inclus !
+        </p>
     </div>
     """, unsafe_allow_html=True)
-    
-    col1, col2, col3 = st.columns([1, 1, 1])
-    with col2:
-        if st.button("🔐 Se connecter / S'inscrire", type="primary", use_container_width=True):
-            st.session_state.page = 'connexion'
-            st.rerun()
 
 def show_connexion():
     st.markdown("""
