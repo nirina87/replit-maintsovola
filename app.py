@@ -22,8 +22,23 @@ if 'analyzer' not in st.session_state:
     st.session_state.analyzer = None
 if 'insights' not in st.session_state:
     st.session_state.insights = None
+if 'page' not in st.session_state:
+    st.session_state.page = 'accueil'
+if 'user_logged_in' not in st.session_state:
+    st.session_state.user_logged_in = False
 
 def main():
+    # Navigation entre les pages
+    if st.session_state.page == 'accueil':
+        show_accueil()
+    elif st.session_state.page == 'connexion':
+        show_connexion()
+    elif st.session_state.page == 'inscription':
+        show_inscription()
+    else:
+        show_dashboard()
+
+def show_accueil():
     # Page d'accueil avec message principal
     st.markdown("""
     <div style="text-align: center; padding: 3rem 0;">
@@ -65,9 +80,104 @@ def main():
     </div>
     """, unsafe_allow_html=True)
     
+    # Bouton de connexion/inscription
+    st.markdown("""
+    <div style="text-align: center; margin: 3rem 0;">
+    </div>
+    """, unsafe_allow_html=True)
+    
+    col1, col2, col3 = st.columns([1, 1, 1])
+    with col2:
+        if st.button("🔐 Se connecter / S'inscrire", type="primary", use_container_width=True):
+            st.session_state.page = 'connexion'
+            st.rerun()
+
+def show_connexion():
+    st.markdown("""
+    <div style="text-align: center; padding: 2rem 0;">
+        <h1 style="color: #2E8B57; font-size: 28px; font-weight: bold;">
+            Connexion à Maintso Vola
+        </h1>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    # Onglets pour connexion et inscription
+    tab1, tab2 = st.tabs(["🔑 Connexion", "📝 Inscription"])
+    
+    with tab1:
+        st.markdown("### Se connecter")
+        with st.form("login_form"):
+            username = st.text_input("Nom d'utilisateur")
+            password = st.text_input("Mot de passe", type="password")
+            
+            col1, col2, col3 = st.columns([1, 1, 1])
+            with col2:
+                login_button = st.form_submit_button("Se connecter", type="primary", use_container_width=True)
+            
+            if login_button:
+                if username and password:
+                    st.success("Connexion réussie !")
+                    st.session_state.user_logged_in = True
+                    st.session_state.page = 'dashboard'
+                    st.rerun()
+                else:
+                    st.error("Veuillez remplir tous les champs")
+    
+    with tab2:
+        st.markdown("### S'inscrire")
+        with st.form("register_form"):
+            nom = st.text_input("Nom *")
+            prenoms = st.text_input("Prénoms")
+            email = st.text_input("Email *")
+            telephone = st.text_input("Téléphone", placeholder="Format: 032XXXXXXX ou 033XXXXXXX")
+            
+            password = st.text_input("Mot de passe *", type="password")
+            confirm_password = st.text_input("Confirmer mot de passe *", type="password")
+            
+            st.markdown("**Pourquoi rejoindre Maintso Vola ?**")
+            investir = st.checkbox("Je souhaite investir dans l'agriculture")
+            cherche_investisseurs = st.checkbox("Je cherche des investisseurs pour mon projet agricole")
+            
+            col1, col2, col3 = st.columns([1, 1, 1])
+            with col2:
+                register_button = st.form_submit_button("S'inscrire", type="primary", use_container_width=True)
+            
+            if register_button:
+                if nom and email and password and confirm_password:
+                    if password == confirm_password:
+                        if telephone and (telephone.startswith('032') or telephone.startswith('033')):
+                            st.success("Inscription réussie ! Vous pouvez maintenant vous connecter.")
+                        elif not telephone:
+                            st.success("Inscription réussie ! Vous pouvez maintenant vous connecter.")
+                        else:
+                            st.error("Format de téléphone invalide. Utilisez 032XXXXXXX ou 033XXXXXXX")
+                    else:
+                        st.error("Les mots de passe ne correspondent pas")
+                else:
+                    st.error("Veuillez remplir tous les champs obligatoires (*)")
+    
+    # Bouton retour
+    if st.button("← Retour à l'accueil"):
+        st.session_state.page = 'accueil'
+        st.rerun()
+
+def show_inscription():
+    # Cette fonction n'est plus utilisée car l'inscription est dans les onglets
+    pass
+
+def show_dashboard():
+    st.title("🌱 Dashboard Maintso Vola")
+    st.markdown("Bienvenue dans votre espace d'analyse de données agricoles !")
+    
     # Sidebar for file upload and configuration
     with st.sidebar:
-        st.header("📁 Data Upload")
+        st.header("📁 Téléchargement de données")
+        
+        # Bouton de déconnexion
+        if st.button("🚪 Se déconnecter"):
+            st.session_state.user_logged_in = False
+            st.session_state.page = 'accueil'
+            st.rerun()
         
         uploaded_file = st.file_uploader(
             "Choose a CSV or Excel file",
