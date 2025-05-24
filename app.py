@@ -24,18 +24,12 @@ if 'insights' not in st.session_state:
     st.session_state.insights = None
 
 def main():
-    # Page d'accueil avec message personnalisé
+    # Page d'accueil avec message principal
     st.markdown("""
-    <div style="text-align: center; padding: 2rem 0;">
-        <h1 style="color: #2E8B57; font-size: 3rem; font-weight: bold; margin-bottom: 1rem;">
+    <div style="text-align: center; padding: 3rem 0;">
+        <h1 style="color: #2E8B57; font-size: 3.5rem; font-weight: bold; margin: 0;">
             L'agritech intelligente au service de la rentabilité durable
         </h1>
-        <h2 style="color: #4A4A4A; font-size: 1.5rem; margin-bottom: 2rem;">
-            🤖 Outil d'Analyse de Données Alimenté par l'IA
-        </h2>
-        <p style="color: #666; font-size: 1.2rem; max-width: 800px; margin: 0 auto;">
-            Téléchargez vos données agricoles et laissez l'IA découvrir des insights et tendances pour optimiser votre rentabilité !
-        </p>
     </div>
     """, unsafe_allow_html=True)
     
@@ -112,37 +106,6 @@ def main():
     
     else:
         st.info("👆 Veuillez télécharger un fichier CSV ou Excel pour commencer l'analyse")
-        
-        # Show example of what the tool can do for agritech
-        st.markdown("### 🎯 Ce que notre plateforme peut faire pour votre exploitation :")
-        col1, col2, col3 = st.columns(3)
-        
-        with col1:
-            st.markdown("""
-            **🌱 Analyse Agricole**
-            - Profil automatique des cultures
-            - Résumés de rendements
-            - Analyse des données manquantes
-            - Détection des types de données
-            """)
-        
-        with col2:
-            st.markdown("""
-            **🤖 Intelligence Artificielle**
-            - Détection de tendances agricoles
-            - Reconnaissance de patterns
-            - Détection d'anomalies climatiques
-            - Prédictions de rendements
-            """)
-        
-        with col3:
-            st.markdown("""
-            **📈 Visualisations**
-            - Graphiques interactifs
-            - Cartes de corrélations
-            - Analyses temporelles
-            - Distribution des récoltes
-            """)
 
 def display_data_preview(data, analyzer):
     st.header("📊 Data Preview & Analysis")
